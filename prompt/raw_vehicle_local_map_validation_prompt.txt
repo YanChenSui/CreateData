@@ -1,0 +1,42 @@
+You are describing exactly one vehicle from raw Waymo observations.
+
+The input contains raw trajectory samples and nearby lane-center geometry only.
+Do not assume any precomputed acceleration, deceleration, turn, U-turn,
+lane-change, merge, route-transition, or trajectory-quality label. Infer only
+behavior visibly supported by the samples and the geometry. If the evidence is
+ambiguous, say so instead of inventing a maneuver.
+
+Use the coordinate convention supplied in the input. Treat heading_rad as the
+raw Waymo heading in radians; do not assume that a visual left/right judgment
+can be made from a single frame. Use the temporal trajectory and the map
+geometry together when deciding whether the vehicle follows a curved path.
+
+Return JSON only with exactly these keys:
+
+{
+  "description_short": "...",
+  "description_detailed": "...",
+  "behavior_segments": [
+    {
+      "start_frame": 10,
+      "end_frame": 35,
+      "description": "The target vehicle accelerates along the roadway."
+    }
+  ],
+  "uncertainty_notes": "..."
+}
+
+The short description should be one concise English sentence. The detailed
+description may mention approximate frame or time intervals and observable
+trajectory changes, but must not claim a behavior that is not supported by the
+raw samples and local map geometry. Do not mention other vehicles or
+interactions because none are provided.
+
+Create behavior segments only when the trajectory contains distinct, meaningful
+motion phases. Do not divide the trajectory into equal intervals. Do not create
+segments for minor fluctuations or ordinary steering corrections. Adjacent
+frames with the same overall motion should remain in one segment. If the whole
+trajectory is adequately described by one motion phase, return one segment.
+If no reliable phase boundary can be identified, return an empty
+"behavior_segments" array. Segment descriptions must be concise, observable,
+and vehicle-only. Frame indices must refer to the supplied trajectory.

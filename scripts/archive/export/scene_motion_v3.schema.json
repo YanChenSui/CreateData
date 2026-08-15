@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "InterHub scene motion v3",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "interaction_id",
+    "source",
+    "temporal",
+    "coordinate_system",
+    "interaction",
+    "processing_status",
+    "kinematics_processing",
+    "agents",
+    "pairwise",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "scene_motion_v3"},
+    "interaction_id": {"type": "string", "minLength": 1},
+    "source": {
+      "type": "object",
+      "required": [
+        "dataset",
+        "split",
+        "dataset_key",
+        "folder",
+        "scene_id",
+        "scenario_index",
+        "source_file"
+      ],
+      "properties": {
+        "dataset": {"type": "string"},
+        "split": {"type": ["string", "null"]},
+        "dataset_key": {"type": "string"},
+        "folder": {"type": ["string", "null"]},
+        "scene_id": {"type": "string"},
+        "scenario_index": {"type": ["integer", "null"]},
+        "source_file": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "temporal": {
+      "type": "object",
+      "required": [
+        "dt_seconds",
+        "source_start_frame",
+        "source_end_frame",
+        "export_start_frame",
+        "export_end_frame",
+        "num_export_frames",
+        "interaction_start_frame",
+        "interaction_end_frame",
+        "num_interaction_frames",
+        "interaction_start_time_s",
+        "interaction_end_time_s",
+        "context_before_frames",
+        "context_after_frames",
+        "relative_time_anchor"
+      ],
+      "properties": {
+        "dt_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "source_start_frame": {"type": "integer"},
+        "source_end_frame": {"type": "integer"},
+        "export_start_frame": {"type": "integer"},
+        "export_end_frame": {"type": "integer"},
+        "num_export_frames": {"type": "integer", "minimum": 1},
+        "interaction_start_frame": {"type": "integer"},
+        "interaction_end_frame": {"type": "integer"},
+        "num_interaction_frames": {"type": "integer", "minimum": 1},
+        "interaction_start_time_s": {"type": "number"},
+        "interaction_end_time_s": {"type": "number"},
+        "context_before_frames": {"type": "integer", "minimum": 0},
+        "context_after_frames": {"type": "integer", "minimum": 0},
+        "relative_time_anchor": {
+          "type": "object",
+          "required": ["type", "frame", "time_s"],
+          "properties": {
+            "type": {"const": "interaction_start"},
+            "frame": {"type": "integer"},
+            "time_s": {"type": "number"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "coordinate_system": {
+      "type": "object",
+      "required": [
+        "frame",
+        "position_unit",
+        "velocity_unit",
+        "acceleration_unit",
+        "heading_unit",
+        "heading_convention",
+        "velocity_frame"
+      ],
+      "properties": {
+        "frame": {"type": "string"},
+        "position_unit": {"type": "string"},
+        "velocity_unit": {"type": "string"},
+        "acceleration_unit": {"type": "string"},
+        "heading_unit": {"type": "string"},
+        "heading_convention": {"type": "string"},
+        "velocity_frame": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "interaction": {
+      "type": "object",
+      "required": [
+        "participant_ids",
+        "key_agent_ids",
+        "num_participants",
+        "interaction_scale",
+        "intensity",
+        "pet_seconds",
+        "source_labels",
+        "behavior"
+      ],
+      "properties": {
+        "participant_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "key_agent_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "num_participants": {"type": "integer", "minimum": 1},
+        "interaction_scale": {"enum": ["pairwise", "multi_agent"]},
+        "intensity": {
+          "type": "object",
+          "required": ["value", "definition", "source"],
+          "properties": {
+            "value": {"type": ["number", "null"]},
+            "definition": {"type": "string"},
+            "source": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "pet_seconds": {"type": ["number", "null"]},
+        "source_labels": {"type": "object"},
+        "behavior": {
+          "type": "object",
+          "required": ["type", "subtype", "status", "source", "rule_version", "confidence"],
+          "properties": {
+            "type": {"type": ["string", "null"]},
+            "subtype": {"type": ["string", "null"]},
+            "status": {"type": "string"},
+            "source": {"type": ["string", "null"]},
+            "rule_version": {"type": ["string", "null"]},
+            "confidence": {"type": ["number", "null"]}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "processing_status": {
+      "type": "object",
+      "required": [
+        "trajectory_export",
+        "map_matching",
+        "pairwise_features",
+        "behavior_classification",
+        "text_generation"
+      ],
+      "properties": {
+        "trajectory_export": {"type": "string"},
+        "map_matching": {"type": "string"},
+        "pairwise_features": {"type": "string"},
+        "behavior_classification": {"type": "string"},
+        "text_generation": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "kinematics_processing": {"type": "object"},
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "agent_id",
+          "agent_type",
+          "control_type",
+          "first_frame",
+          "last_frame",
+          "state_count",
+          "summary",
+          "states"
+        ],
+        "properties": {
+          "agent_id": {"type": "string"},
+          "agent_type": {"type": "string"},
+          "control_type": {"type": ["string", "null"]},
+          "first_frame": {"type": ["integer", "null"]},
+          "last_frame": {"type": ["integer", "null"]},
+          "state_count": {"type": "integer", "minimum": 1},
+          "observed_state_count": {"type": "integer", "minimum": 0},
+          "summary": {"type": "object"},
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "frame",
+                "time_s",
+                "relative_time_s",
+                "position",
+                "velocity",
+                "acceleration",
+                "heading_rad",
+                "map",
+                "valid"
+              ],
+              "properties": {
+                "frame": {"type": "integer"},
+                "time_s": {"type": "number"},
+                "relative_time_s": {"type": "number"},
+                "position": {"type": "object"},
+                "velocity": {"type": "object"},
+                "acceleration": {"type": "object"},
+                "heading_rad": {"type": ["number", "null"]},
+                "map": {
+                  "type": "object",
+                  "required": [
+                    "lane_id",
+                    "lane_match_confidence",
+                    "match_method",
+                    "centerline_distance_m",
+                    "heading_error_rad",
+                    "lane_s_m",
+                    "lateral_offset_m",
+                    "match_status"
+                  ],
+                  "properties": {
+                    "lane_id": {"type": ["string", "null"]},
+                    "lane_match_confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+                    "match_method": {"type": ["string", "null"]},
+                    "centerline_distance_m": {"type": ["number", "null"], "minimum": 0},
+                    "heading_error_rad": {"type": ["number", "null"], "minimum": 0},
+                    "lane_s_m": {"type": ["number", "null"]},
+                    "lateral_offset_m": {"type": ["number", "null"]},
+                    "match_status": {"enum": ["pending", "matched", "unmatched"]}
+                  },
+                  "additionalProperties": true
+                },
+                "valid": {"type": "boolean"}
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "pairwise": {"type": ["object", "null"]},
+    "provenance": {"type": "object"}
+  },
+  "additionalProperties": false
+}

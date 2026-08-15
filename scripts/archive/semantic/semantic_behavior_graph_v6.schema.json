@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "semantic_behavior_graph_v6.schema.json",
+  "title": "Semantic Behavior Graph v6",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "agents", "interaction"],
+  "properties": {
+    "schema_version": {
+      "const": "semantic_behavior_graph_v6"
+    },
+    "agents": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["subject", "reference", "participant"]
+      }
+    },
+    "interaction": {
+      "$ref": "#/$defs/interaction"
+    }
+  },
+  "$defs": {
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "behavior_type",
+        "interaction_type",
+        "initiator",
+        "reference"
+      ],
+      "properties": {
+        "behavior_type": {"type": "string", "minLength": 1},
+        "behavior_subtype": {"type": "string", "minLength": 1},
+        "interaction_type": {"type": "string", "minLength": 1},
+        "initiator": {"type": "string", "minLength": 1},
+        "reference": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "null"}
+          ]
+        },
+        "direction": {"enum": ["left", "right"]},
+        "relation_before": {"$ref": "#/$defs/relation"},
+        "relation_during": {"$ref": "#/$defs/during_relation"},
+        "relation_after": {"$ref": "#/$defs/relation"},
+        "initiator_motion": {"$ref": "#/$defs/motion"},
+        "reference_motion": {"$ref": "#/$defs/motion"},
+        "order_flip": {"const": true}
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lane_relation": {
+          "enum": ["same_lane", "different_lanes", "adjacent_lanes"]
+        },
+        "initiator_position": {
+          "enum": ["ahead", "behind"]
+        }
+      }
+    },
+    "during_relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target_matches_reference_lane": {"type": "boolean"}
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speed_trend"],
+      "properties": {
+        "speed_trend": {
+          "enum": ["accelerating", "decelerating", "stable"]
+        }
+      }
+    }
+  }
+}
